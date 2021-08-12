@@ -34,7 +34,7 @@ class CSSResource extends Drash.Http.Resource {
 
     // Rerender all SCSS files
     const renderProcess = Deno.run({
-      cmd: ["sass", `scss:www/css`],
+      cmd: ["sass", "scss:www/css"],
     });
     await renderProcess.status();
 
