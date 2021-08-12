@@ -1,16 +1,15 @@
 import { join } from "https://deno.land/std@0.104.0/node/path.ts";
 import { Drash } from "https://deno.land/x/drash@v1.5.1/mod.ts";
 
-async function getDirectoryFilenames(dir: string): Promise<string[]> {
-  const scssFiles: string[] = [];
-  for await (const de of Deno.readDir(dir)) {
-    if (de.isDirectory) {
-      scssFiles.push(...await getDirectoryFilenames(join(dir, de.name)));
-    } else {
-      scssFiles.push(de.name);
-    }
-  }
-  return scssFiles;
+function generateGenericRoute(
+  prefix: string,
+  depth: number,
+): string[] {
+  if (depth === 0) return [prefix];
+  const arr = generateGenericRoute(prefix, depth - 1);
+  return arr.concat(
+    `${arr![arr!.length - 1]}/:f${depth}?`,
+  );
 }
 
 class HTMLResource extends Drash.Http.Resource {
@@ -23,25 +22,30 @@ class HTMLResource extends Drash.Http.Resource {
 }
 
 class CSSResource extends Drash.Http.Resource {
-  static paths = ["/css"];
+  static paths = generateGenericRoute("/css", 32);
   public async GET() {
-    this.response.headers.set("Content-Type", "text/css");
+    // Reconstruct the file name from the path parameters
+    const fileName = Object.values(this.request.getAllPathParams()).filter(
+      (param) => param != null && param !== "",
+    ).join(
+      "/",
+    );
 
-    const filePaths = await getDirectoryFilenames("./scss");
-    if (filePaths.length > 0) {
-      const renderProcess = Deno.run({
-        cmd: ["sass", ...filePaths],
-        stdout: "piped",
-      });
-      await renderProcess.status();
-
-      const cssBuf = await renderProcess.output();
-      const decoder = new TextDecoder("utf-8");
-      const cssData = decoder.decode(cssBuf.buffer);
-
-      this.response.body = cssData;
+    if (fileName == null || fileName === "") {
+      this.response.status_code = 404;
+      this.response.body = "Not Found";
+      return this.response;
     }
 
+    // Rerender all SCSS files
+    const renderProcess = Deno.run({
+      cmd: ["sass", `scss:www/css`],
+    });
+    await renderProcess.status();
+
+    // Retrieve the appropriate CSS file
+    this.response.headers.set("Content-Type", "text/css");
+    this.response.body = await Deno.readFile(join("./www/css", fileName));
     return this.response;
   }
 }
