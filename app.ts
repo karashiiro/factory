@@ -1,3 +1,4 @@
+import { exists } from "https://deno.land/std@0.104.0/fs/mod.ts";
 import { join } from "https://deno.land/std@0.104.0/node/path.ts";
 import { Drash } from "https://deno.land/x/drash@v1.5.1/mod.ts";
 
@@ -31,21 +32,24 @@ class CSSResource extends Drash.Http.Resource {
       "/",
     );
 
-    if (fileName == null || fileName === "") {
-      this.response.status_code = 404;
-      this.response.body = "Not Found";
-      return this.response;
-    }
-
     // Rerender all SCSS files
     const renderProcess = Deno.run({
       cmd: ["sass", `scss:www/css`],
     });
     await renderProcess.status();
 
+    const fsFileName = join("./www/css", fileName);
+
+    // Ensure requested file exists
+    if (fileName == null || fileName === "" || !await exists(fsFileName)) {
+      this.response.status_code = 404;
+      this.response.body = "Not Found";
+      return this.response;
+    }
+
     // Retrieve the appropriate CSS file
     this.response.headers.set("Content-Type", "text/css");
-    this.response.body = await Deno.readFile(join("./www/css", fileName));
+    this.response.body = await Deno.readFile(fsFileName);
     return this.response;
   }
 }
