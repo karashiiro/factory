@@ -2,5 +2,8 @@
 
 # factory
 
+A simple flat-file website generator, heavily inspired by
+[nprapps/app-template](https://github.com/nprapps/app-template).
+
 Requires [deno](https://deno.land/) v1.13.0 or higher, and the
 [Sass CLI](https://sass-lang.com/install) v1.37.5 or higher.
