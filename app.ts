@@ -3,6 +3,8 @@ import {
   fromFileUrl,
 } from "https://deno.land/std@0.104.0/node/path.ts";
 import { Drash } from "https://deno.land/x/drash@v1.5.1/mod.ts";
+import { Tengine } from "https://deno.land/x/drash_middleware@v0.7.9/tengine/mod.ts";
+import { configure, renderFile } from "https://deno.land/x/eta@v1.12.2/mod.ts";
 
 async function RerenderCSSMiddleware(
   req: Drash.Http.Request,
@@ -17,12 +19,34 @@ async function RerenderCSSMiddleware(
 
 class HTMLResource extends Drash.Http.Resource {
   static paths = ["/"];
-  public GET() {
+  public async GET() {
     this.response.headers.set("Content-Type", "text/html");
-    this.response.body = `Hello World! (on ${new Date()})`;
+    this.response.body = await this.response.render(
+      "./index",
+      {
+        message: "Hella using Eta.",
+        template_engines: [
+          {
+            name: "dejs",
+            url: "https://github.com/syumai/dejs",
+          },
+          {
+            name: "Dinja",
+            url: "https://github.com/denjucks/dinja",
+          },
+          {
+            name: "Jae",
+            url: "https://github.com/drashland/deno-drash-middleware",
+          },
+        ],
+      },
+    );
     return this.response;
   }
 }
+
+// Eta configuration
+configure({ views: "./templates/" });
 
 const server = new Drash.Http.Server({
   directory: dirname(fromFileUrl(import.meta.url)),
@@ -32,6 +56,14 @@ const server = new Drash.Http.Server({
   }),
   middleware: {
     before_request: [RerenderCSSMiddleware],
+    after_resource: [Tengine({
+      render: async (...args: unknown[]): Promise<string> => {
+        return await renderFile(
+          args[0] as string,
+          args[1] as any,
+        ) as string;
+      },
+    })],
   },
   resources: [HTMLResource],
   static_paths: {
