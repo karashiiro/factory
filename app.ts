@@ -25,6 +25,7 @@ async function RerenderCSSMiddleware(
 class HomeResource extends Drash.Http.Resource {
   static paths = ["/", `${PAGES_PATH_PREFIX}/:pageNumber`];
   public async GET() {
+    // Get the requested page number
     let pageNumber: number;
     let pageNumberRequested = this.request.getPathParam("pageNumber");
     if (pageNumberRequested == null) {
@@ -36,6 +37,7 @@ class HomeResource extends Drash.Http.Resource {
       return this.response;
     }
 
+    // Export the copy
     const copy = await getCopy(COPY_CSV_URL);
     if (copy == null) {
       this.response.status_code = 404;
@@ -47,13 +49,20 @@ class HomeResource extends Drash.Http.Resource {
     const endIndex = Math.min(startIndex + ARTICLES_PER_PAGE, copy.length - 1);
     const articles = copy.slice(startIndex, endIndex);
 
+    // Check if the page number is past the end
+    if (pageNumber > Math.max(1, copy.length / ARTICLES_PER_PAGE)) {
+      this.response.status_code = 404;
+      this.response.body = "Not Found";
+      return this.response;
+    }
+
     this.response.headers.set("Content-Type", "text/html");
     this.response.body = await this.response.render(
       "./index",
       {
         articles,
         pageNumber,
-        nextPageNumber: pageNumber > (copy.length / ARTICLES_PER_PAGE)
+        nextPageNumber: pageNumber + 1 > (copy.length / ARTICLES_PER_PAGE)
           ? null
           : pageNumber + 1,
       },
