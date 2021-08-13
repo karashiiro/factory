@@ -1,6 +1,7 @@
 {
   "imports": {
     "csv": "https://deno.land/std@0.104.0/encoding/csv.ts",
+    "deno-dom": "https://deno.land/x/deno_dom@v0.1.13-alpha/deno-dom-wasm.ts",
     "drash": "https://deno.land/x/drash@v1.5.1/mod.ts",
     "eta": "https://deno.land/x/eta@v1.12.2/mod.ts",
     "path": "https://deno.land/std@0.104.0/node/path.ts",

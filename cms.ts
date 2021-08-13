@@ -3,7 +3,7 @@ import { parse } from "csv";
 export type Copy = CopyRow[];
 
 export interface CopyRow {
-  path: string;
+  fileName: string;
   postDate: string;
   title: string;
   synopsis: string;
@@ -11,10 +11,9 @@ export interface CopyRow {
 }
 
 function getDocumentId(url: string): string {
-  const matchGroups = url.match(
-    /docs\.google\.com\/document\/d\/(?<documentId>\w*)/g,
-  )
-    ?.groups;
+  const matchGroups =
+    /docs\.google\.com\/document\/d\/(?<documentId>[^$\/?]*)/gm.exec(url)
+      ?.groups;
 
   if (matchGroups == null || matchGroups["documentId"] == null) {
     throw "No document ID found in the input string";
@@ -39,12 +38,12 @@ export async function getCopy(csvPath: string): Promise<Copy> {
     parse: (input) => {
       const row = input as CopyRow;
       return {
-        path: row.path,
+        fileName: row.fileName,
         postDate: row.postDate,
         title: row.title,
         synopsis: row.synopsis,
         url: row.url,
-      };
+      } as CopyRow;
     },
   }) as Copy;
 }

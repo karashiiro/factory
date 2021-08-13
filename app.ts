@@ -1,7 +1,10 @@
 import { dirname, fromFileUrl } from "path";
+import { DOMParser } from "deno-dom";
 import { Drash } from "drash";
 import { Tengine } from "tengine";
 import { configure, renderFile } from "eta";
+import { getCopy, getDocument } from "./cms.ts";
+import { COPY_CSV_URL } from "./app_config.ts";
 
 async function RerenderCSSMiddleware(
   req: Drash.Http.Request,
@@ -15,30 +18,40 @@ async function RerenderCSSMiddleware(
 }
 
 class HTMLResource extends Drash.Http.Resource {
-  static paths = ["/"];
+  static paths = ["/article/:fileName"];
   public async GET() {
-    this.response.headers.set("Content-Type", "text/html");
-    this.response.body = await this.response.render(
-      "./index",
-      {
-        message: "Hella using Eta.",
-        template_engines: [
-          {
-            name: "dejs",
-            url: "https://github.com/syumai/dejs",
-          },
-          {
-            name: "Dinja",
-            url: "https://github.com/denjucks/dinja",
-          },
-          {
-            name: "Jae",
-            url: "https://github.com/drashland/deno-drash-middleware",
-          },
-        ],
-      },
-    );
-    return this.response;
+    try {
+      const fileName = this.request.getPathParam("fileName");
+
+      // Export the copy
+      const copy = await getCopy(COPY_CSV_URL);
+      const documentInfo = copy.find((r) => r.fileName === fileName);
+      if (documentInfo == null) {
+        this.response.status_code = 404;
+        this.response.body = "Not Found";
+        return this.response;
+      }
+
+      // Export document and pull out article body
+      const documentHtml = await getDocument(documentInfo.url);
+      const dom = new DOMParser().parseFromString(documentHtml, "text/html");
+      const documentInnerHtml = dom?.querySelector("body")?.innerHTML;
+      if (documentInnerHtml == null) {
+        this.response.status_code = 500;
+        this.response.body = "Internal Server Error";
+        return this.response;
+      }
+
+      this.response.headers.set("Content-Type", "text/html");
+      this.response.body = await this.response.render(
+        "./index",
+        { documentInnerHtml },
+      );
+      return this.response;
+    } catch (err) {
+      console.error("Error:", err);
+      throw err;
+    }
   }
 }
 

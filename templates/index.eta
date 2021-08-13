@@ -8,16 +8,7 @@
   </head>
   <body style="background: #f4f4f4">
     <div style="max-width: 640px; margin: 50px auto;">
-      <h1 class="text-5xl mb-5"><%= it.message %></h1>
-      <p class="mb-5">Eta is a template engine. Some other template engines are:</p>
-      <ul class="list-disc ml-5">
-        <% for (const index in it.template_engines) { %>
-          <li>
-            <span class="text-bold"><%= it.template_engines[index].name %>: </span>
-            <a href="<%= it.template_engines[index].url %>" target="_BLANK"><%= it.template_engines[index].url %></a>
-          </li>
-        <% } %>
-      </ul>
+      <%~ it.documentInnerHtml %>
     </div>
   </body>
 </html>
