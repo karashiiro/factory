@@ -3,3 +3,5 @@ export const COPY_CSV_URL =
 
 export const ARTICLE_PATH_PREFIX = "/article";
 export const PAGES_PATH_PREFIX = "/page";
+
+export const ARTICLES_PER_PAGE = 10;

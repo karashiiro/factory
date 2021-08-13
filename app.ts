@@ -6,6 +6,7 @@ import { configure, renderFile } from "eta";
 import { getCopy, getDocument } from "./cms.ts";
 import {
   ARTICLE_PATH_PREFIX,
+  ARTICLES_PER_PAGE,
   COPY_CSV_URL,
   PAGES_PATH_PREFIX,
 } from "./app_config.ts";
@@ -24,9 +25,36 @@ async function RerenderCSSMiddleware(
 class HomeResource extends Drash.Http.Resource {
   static paths = ["/", `/${PAGES_PATH_PREFIX}/:pageNumber`];
   public async GET() {
+    let pageNumber: number;
+    let pageNumberRequested = this.request.getPathParam("pageNumber");
+    if (pageNumberRequested == null) {
+      pageNumber = 1;
+    } else if (!isNaN(parseInt(pageNumberRequested))) {
+      pageNumber = parseInt(pageNumberRequested);
+    } else { // Bad page number
+      this.response.redirect(302, "/");
+      return this.response;
+    }
+
+    const copy = await getCopy(COPY_CSV_URL);
+    if (copy == null) {
+      this.response.status_code = 404;
+      this.response.body = "Not Found";
+      return this.response;
+    }
+
+    const startIndex = ARTICLES_PER_PAGE * pageNumber;
+    const endIndex = Math.min(startIndex + ARTICLES_PER_PAGE, copy.length - 1);
+    const articles = copy.slice(startIndex, endIndex);
+
     this.response.headers.set("Content-Type", "text/html");
     this.response.body = await this.response.render(
       "./index",
+      {
+        articles,
+        pageNumber,
+        nextPageNumber: pageNumber > copy.length ? null : pageNumber + 1,
+      },
     );
     return this.response;
   }
