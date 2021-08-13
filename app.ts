@@ -17,7 +17,18 @@ async function RerenderCSSMiddleware(
   }
 }
 
-class HTMLResource extends Drash.Http.Resource {
+class HomeResource extends Drash.Http.Resource {
+  static paths = ["/", "/page/:pageNumber"];
+  public async GET() {
+    this.response.headers.set("Content-Type", "text/html");
+    this.response.body = await this.response.render(
+      "./index",
+    );
+    return this.response;
+  }
+}
+
+class ArticleResource extends Drash.Http.Resource {
   static paths = ["/article/:fileName"];
   public async GET() {
     try {
@@ -44,7 +55,7 @@ class HTMLResource extends Drash.Http.Resource {
 
       this.response.headers.set("Content-Type", "text/html");
       this.response.body = await this.response.render(
-        "./index",
+        "./article",
         { documentInnerHtml },
       );
       return this.response;
@@ -75,7 +86,7 @@ const server = new Drash.Http.Server({
       },
     })],
   },
-  resources: [HTMLResource],
+  resources: [HomeResource, ArticleResource],
   static_paths: {
     "/css": "/www/css",
   },

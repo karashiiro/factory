@@ -8,6 +8,7 @@
   </head>
   <body style="background: #f4f4f4">
     <div style="max-width: 640px; margin: 50px auto;">
+      <%~ it.documentInnerHtml %>
     </div>
   </body>
 </html>
