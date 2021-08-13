@@ -53,7 +53,9 @@ class HomeResource extends Drash.Http.Resource {
       {
         articles,
         pageNumber,
-        nextPageNumber: pageNumber > copy.length ? null : pageNumber + 1,
+        nextPageNumber: pageNumber > (copy.length / ARTICLES_PER_PAGE)
+          ? null
+          : pageNumber + 1,
       },
     );
     return this.response;
