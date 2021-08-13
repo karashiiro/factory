@@ -23,7 +23,7 @@ async function RerenderCSSMiddleware(
 }
 
 class HomeResource extends Drash.Http.Resource {
-  static paths = ["/", `/${PAGES_PATH_PREFIX}/:pageNumber`];
+  static paths = ["/", `${PAGES_PATH_PREFIX}/:pageNumber`];
   public async GET() {
     let pageNumber: number;
     let pageNumberRequested = this.request.getPathParam("pageNumber");
@@ -63,7 +63,7 @@ class HomeResource extends Drash.Http.Resource {
 }
 
 class ArticleResource extends Drash.Http.Resource {
-  static paths = [`/${ARTICLE_PATH_PREFIX}/:fileName`];
+  static paths = [`${ARTICLE_PATH_PREFIX}/:fileName`];
   public async GET() {
     try {
       const fileName = this.request.getPathParam("fileName");
