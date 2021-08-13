@@ -4,7 +4,11 @@ import { Drash } from "drash";
 import { Tengine } from "tengine";
 import { configure, renderFile } from "eta";
 import { getCopy, getDocument } from "./cms.ts";
-import { COPY_CSV_URL } from "./app_config.ts";
+import {
+  ARTICLE_PATH_PREFIX,
+  COPY_CSV_URL,
+  PAGES_PATH_PREFIX,
+} from "./app_config.ts";
 
 async function RerenderCSSMiddleware(
   req: Drash.Http.Request,
@@ -18,7 +22,7 @@ async function RerenderCSSMiddleware(
 }
 
 class HomeResource extends Drash.Http.Resource {
-  static paths = ["/", "/page/:pageNumber"];
+  static paths = ["/", `/${PAGES_PATH_PREFIX}/:pageNumber`];
   public async GET() {
     this.response.headers.set("Content-Type", "text/html");
     this.response.body = await this.response.render(
@@ -29,7 +33,7 @@ class HomeResource extends Drash.Http.Resource {
 }
 
 class ArticleResource extends Drash.Http.Resource {
-  static paths = ["/article/:fileName"];
+  static paths = [`/${ARTICLE_PATH_PREFIX}/:fileName`];
   public async GET() {
     try {
       const fileName = this.request.getPathParam("fileName");
