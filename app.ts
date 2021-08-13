@@ -1,10 +1,7 @@
-import {
-  dirname,
-  fromFileUrl,
-} from "https://deno.land/std@0.104.0/node/path.ts";
-import { Drash } from "https://deno.land/x/drash@v1.5.1/mod.ts";
-import { Tengine } from "https://deno.land/x/drash_middleware@v0.7.9/tengine/mod.ts";
-import { configure, renderFile } from "https://deno.land/x/eta@v1.12.2/mod.ts";
+import { dirname, fromFileUrl } from "path";
+import { Drash } from "drash";
+import { Tengine } from "tengine";
+import { configure, renderFile } from "eta";
 
 async function RerenderCSSMiddleware(
   req: Drash.Http.Request,
