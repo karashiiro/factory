@@ -79,7 +79,7 @@ class HomeResource extends Drash.Http.Resource {
 
     this.response.headers.set("Content-Type", "text/html");
     this.response.body = await this.response.render(
-      "./index",
+      "./home",
       {
         articles,
         articlePathPrefix: ARTICLE_PATH_PREFIX,
