@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="/css/reset.css">
 <link rel="stylesheet" href="/css/app.css">
+<% if (it.extraStyleLinks != null) { %>
+  <%~ it.extraStyleLinks %>
+<% } %>
 <link rel="stylesheet" href="/css/gdocs.css">
 <link rel="stylesheet" href="/css/fontawesome.css">
 <link rel="stylesheet" href="/css/fontawesome-brands.css">

@@ -2,8 +2,8 @@
 <html>
   <head>
     <%~ includeFile("_meta") %>
-    <%~ includeFile("_styles") %>
-    <title>Tengine</title>
+    <%~ includeFile("_styles", { extraStyleLinks: it.extraStyleLinks }) %>
+    <title>factory</title>
   </head>
   <body>
     <script>0</script>

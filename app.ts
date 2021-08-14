@@ -79,7 +79,7 @@ class HomeResource extends Drash.Http.Resource {
 
     this.response.headers.set("Content-Type", "text/html");
     this.response.body = await this.response.render(
-      "./home",
+      "./index",
       {
         articles,
         articlePathPrefix: ARTICLE_PATH_PREFIX,
@@ -146,10 +146,39 @@ class ArticleResource extends Drash.Http.Resource {
         return this.response;
       }
 
+      // Rerender custom styles to a static file
+      const styles = dom?.querySelector("style")?.innerText;
+      const stylesheetFileName = `${
+        documentInfo.fileName.substr(0, documentInfo.fileName.lastIndexOf("."))
+      }.css`;
+      if (styles != null) {
+        const renderProcess = Deno.run({
+          cmd: [
+            "sass",
+            "--stdin",
+            "--no-source-map",
+            `www/css/${stylesheetFileName}`,
+          ],
+          stdin: "piped",
+        });
+
+        // We scope it to the gdocs class so it doesn't affect our other styles
+        await renderProcess.stdin.write(
+          new TextEncoder().encode(`.gdocs{${styles}}`),
+        );
+        renderProcess.stdin.close();
+
+        await renderProcess.status();
+      }
+
       this.response.headers.set("Content-Type", "text/html");
       this.response.body = await this.response.render(
         "./article",
-        { documentInnerHtml },
+        {
+          documentInnerHtml,
+          extraStyleLinks:
+            `<link rel="stylesheet" href="/css/${stylesheetFileName}">`,
+        },
       );
       return this.response;
     } catch (err) {
@@ -164,7 +193,7 @@ configure({ views: "./templates/" });
 
 // Map static paths. We can't just map the entire www folder as a static directory because
 // we need to reserve the "/" route for our generated index page.
-const pathMap: { [key: string]: string } = {};
+const pathMap: { [key: string]: string } = { "/scss": "/scss" };
 for await (const item of Deno.readDir("www")) {
   pathMap[`/${item.name}`] = `/www/${item.name}`;
 }
