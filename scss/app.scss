@@ -1,8 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
 body {
     background-color: #f4f4f4;
+    font-family: "Roboto", sans-serif;
 }
 
 .article {
     max-width: 640px;
     margin: 50px auto;
+}
+
+.title {
+    font-size: 24pt;
 }
