@@ -28,6 +28,31 @@ body {
     }
 }
 
+.page-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .page-button {
+        color: #4c4c4c;
+        text-decoration: none;
+        font-size: 20pt;
+        margin-left: 4px;
+        margin-right: 4px;
+
+        &.number {
+            font-size: 16pt;
+            margin-left: 4px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        &.disabled {
+            color: #c3c3c3 !important;
+        }
+    }
+}
+
 /* Google Docs restyling - these class names must not be changed. */
 .title {
     font-size: 24pt;

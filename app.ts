@@ -56,16 +56,53 @@ class HomeResource extends Drash.Http.Resource {
       return this.response;
     }
 
+    // Pagination things
+    const prevPageNumber = pageNumber - 1 > 0 ? pageNumber - 1 : null;
+    const nextPageNumber = pageNumber + 1 > (copy.length / ARTICLES_PER_PAGE)
+      ? null
+      : pageNumber + 1;
+    const lastPageNumber = Math.ceil(copy.length / ARTICLES_PER_PAGE);
+
+    const prevPageEnabled = pageNumber !== 1;
+    const nextPageEnabled = nextPageNumber != null;
+
     this.response.headers.set("Content-Type", "text/html");
     this.response.body = await this.response.render(
       "./index",
       {
         articles,
         articlePathPrefix: ARTICLE_PATH_PREFIX,
-        pageNumber,
-        nextPageNumber: pageNumber + 1 > (copy.length / ARTICLES_PER_PAGE)
-          ? null
-          : pageNumber + 1,
+        pagesPathPrefix: PAGES_PATH_PREFIX,
+        pages: {
+          first: {
+            pageNumber: 1,
+            enabled: true,
+            url: PAGES_PATH_PREFIX + "/1",
+          },
+          prev: {
+            pageNumber: prevPageNumber,
+            enabled: prevPageEnabled,
+            url: !prevPageEnabled
+              ? "javascript:void(0);"
+              : PAGES_PATH_PREFIX + "/" + prevPageNumber,
+          },
+          curr: {
+            pageNumber,
+            enabled: true,
+            url: "javascript:void(0);",
+          },
+          next: {
+            pageNumber: nextPageNumber,
+            enabled: nextPageEnabled,
+            url: !nextPageEnabled ? "javascript:void(0);"
+            : PAGES_PATH_PREFIX + "/" + nextPageNumber,
+          },
+          last: {
+            pageNumber: lastPageNumber,
+            enabled: true,
+            url: PAGES_PATH_PREFIX + "/" + lastPageNumber,
+          },
+        },
       },
     );
     return this.response;
@@ -113,6 +150,15 @@ class ArticleResource extends Drash.Http.Resource {
 // Eta configuration
 configure({ views: "./templates/" });
 
+// Map static paths. We can't just map the entire www folder as a static directory because
+// we need to reserve the "/" route for our generated index page.
+const pathMap: { [key: string]: string } = {};
+for await (const item of Deno.readDir("www")) {
+  pathMap[`/${item.name}`] = `/www/${item.name}`;
+}
+
+console.log("Using path map:", pathMap);
+
 const server = new Drash.Http.Server({
   directory: dirname(fromFileUrl(import.meta.url)),
   logger: new Drash.CoreLoggers.ConsoleLogger({
@@ -131,9 +177,7 @@ const server = new Drash.Http.Server({
     })],
   },
   resources: [HomeResource, ArticleResource],
-  static_paths: {
-    "/css": "/www/css",
-  },
+  static_paths: pathMap,
 });
 
 server.run({

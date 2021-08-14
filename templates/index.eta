@@ -11,4 +11,11 @@
     </div>
     <hr />
   <% }) %>
+  <div class="page-button-container">
+    <a class="page-button<%= !it.pages.first.enabled ? " disabled" : "" %>" href="<%= it.pages.first.url %>"><i class="fas fa-angle-double-left"></i></a>
+    <a class="page-button<%= !it.pages.prev.enabled ? " disabled" : "" %>" href="<%= it.pages.prev.url %>"><i class="fas fa-angle-left"></i></a>
+    <a class="page-button number<%= !it.pages.curr.enabled ? " disabled" : "" %>" href="<%= it.pages.curr.url %>"><%= it.pages.curr.pageNumber %></span>
+    <a class="page-button<%= !it.pages.next.enabled ? " disabled" : "" %>" href="<%= it.pages.next.url %>"><i class="fas fa-angle-right"></i></a>
+    <a class="page-button<%= !it.pages.last.enabled ? " disabled" : "" %>" href="<%= it.pages.last.url %>"><i class="fas fa-angle-double-right"></i></a>
+  </div>
 </div>
