@@ -14,7 +14,7 @@ import {
 async function RerenderCSSMiddleware(
   req: Drash.Http.Request,
 ): Promise<void> {
-  if (req.url_path.startsWith("css")) {
+  if (req.url_path.startsWith("/css")) {
     const renderProcess = Deno.run({
       cmd: ["sass", "scss:www/css"],
     });
