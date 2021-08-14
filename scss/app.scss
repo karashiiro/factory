@@ -6,8 +6,14 @@ body {
 }
 
 .content {
-    max-width: 640px;
+    width: 50%;
     margin: 50px auto;
+}
+
+@media screen and (max-width: 900px) {
+    .content {
+        width: 100%;
+    }
 }
 
 .nav-article {
@@ -31,6 +37,18 @@ body {
         color: #5c5c5c;
         font-size: 10pt;
         margin-top: 0;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .nav-article {
+        height: 400px;
+        width: 300px;
+
+        .nav-article-thumb {
+            margin-right: 0;
+            display: block
+        }
     }
 }
 
