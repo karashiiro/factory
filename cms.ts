@@ -4,6 +4,16 @@ export type Copy = CopyRow[];
 
 export interface CopyRow {
   fileName: string;
+  postDate: Date;
+  title: string;
+  synopsis: string;
+  url: string;
+  thumbnailUrl: string;
+  thumbnailAlt: string;
+}
+
+export interface CopyRowRaw {
+  fileName: string;
   postDate: string;
   title: string;
   synopsis: string;
@@ -13,19 +23,39 @@ export interface CopyRow {
 }
 
 function getDocumentId(url: string): string {
-  const matchGroups =
-    /docs\.google\.com\/document\/d\/(?<documentId>[^$\/?]*)/gm.exec(url)
-      ?.groups;
+  const matchGroups = /docs\.google\.com\/document\/d\/(?<documentId>[^$\/?]*)/m
+    .exec(url)
+    ?.groups;
 
-  if (matchGroups == null || matchGroups["documentId"] == null) {
+  const documentId = matchGroups?.documentId;
+
+  if (documentId == null) {
     throw "No document ID found in the input string";
   }
 
-  return matchGroups["documentId"];
+  return documentId;
 }
 
 function getDocumentExportPath(documentId: string): string {
   return `https://docs.google.com/document/d/${documentId}/export?format=html`;
+}
+
+function parseDate(dateRaw: string): Date {
+  const matchGroups = /(?<month>\d+)\/(?<date>\d+)\/(?<year>\d+)/m.exec(dateRaw)
+    ?.groups;
+
+  const month = parseInt(matchGroups?.month ?? "");
+  const date = parseInt(matchGroups?.date ?? "");
+  const year = parseInt(matchGroups?.year ?? "");
+
+  if (
+    isNaN(month) || isNaN(date) || isNaN(year) || month <= 0 || month > 12 ||
+    date <= 0 || date > 31 || (month === 2 && date > 29)
+  ) {
+    throw `Cannot parse invalid date`;
+  }
+
+  return new Date(year, month, date);
 }
 
 export async function getCopy(csvPath: string): Promise<Copy> {
@@ -38,10 +68,10 @@ export async function getCopy(csvPath: string): Promise<Copy> {
   return await parse(csvData, {
     skipFirstRow: true,
     parse: (input) => {
-      const row = input as CopyRow;
+      const row = input as CopyRowRaw;
       return {
         fileName: row.fileName,
-        postDate: row.postDate,
+        postDate: parseDate(row.postDate),
         title: row.title,
         synopsis: row.synopsis,
         url: row.url,

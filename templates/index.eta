@@ -6,6 +6,7 @@
       <a href="<%= it.articlePathPrefix %>/<%= article.fileName %>">
         <img class="nav-article-thumb" src="<%= article.thumbnailUrl %>" alt="<%= article.thumbnailAlt %>" height=200 width=300 align="left" />
         <span class="nav-article-title"><%= article.title %></span>
+        <p class="nav-article-postdate"><%= Intl.DateTimeFormat("en", { year: "numeric", month: "long", day: "numeric" }).format(article.postDate) %></p>
         <p class="nav-article-synopsis"><%= article.synopsis %></p>
       </a>
     </div>

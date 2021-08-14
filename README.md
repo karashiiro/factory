@@ -7,3 +7,13 @@ A simple flat-file website generator, heavily inspired by
 
 Requires [deno](https://deno.land/) v1.13.0 or higher, and the
 [Sass CLI](https://sass-lang.com/install) v1.37.5 or higher.
+
+Dates are hardcoded to be read from the spreadsheet in `mm/dd/yyyy` format. If
+you would like to change this, refer to `parseDate()` in [cms.ts](cms.ts).
+
+You can apply some amount of data validation to your copy by selecting the date
+column, deselecting the header cell with Ctrl+Click, and using the following
+settings:
+
+![Data validation](https://i.imgur.com/p8Rdgwi.png)
+![Reject invalid dates](https://i.imgur.com/hC8esCN.png)
