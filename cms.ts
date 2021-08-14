@@ -8,6 +8,7 @@ export interface CopyRow {
   title: string;
   synopsis: string;
   url: string;
+  thumbnailUrl: string;
 }
 
 function getDocumentId(url: string): string {
@@ -43,6 +44,7 @@ export async function getCopy(csvPath: string): Promise<Copy> {
         title: row.title,
         synopsis: row.synopsis,
         url: row.url,
+        thumbnailUrl: row.thumbnailUrl,
       } as CopyRow;
     },
   }) as Copy;
