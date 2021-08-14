@@ -2,6 +2,8 @@
 
 # factory
 
+**This cannot be considered production-ready. No support will be provided.**
+
 A simple flat-file website generator, heavily inspired by
 [nprapps/app-template](https://github.com/nprapps/app-template).
 
