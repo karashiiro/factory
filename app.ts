@@ -26,6 +26,10 @@ function getPageUrl(pageNumber: number) {
   return PAGES_PATH_PREFIX + "/" + pageNumber;
 }
 
+function getPageCount(pages: number): number {
+  return Math.ceil(pages / ARTICLES_PER_PAGE);
+}
+
 class HomeResource extends Drash.Http.Resource {
   static paths = ["/", `${PAGES_PATH_PREFIX}/:pageNumber`];
   public async GET() {
@@ -57,7 +61,7 @@ class HomeResource extends Drash.Http.Resource {
     const articles = copy.slice(startIndex, endIndex);
 
     // Check if the page number is past the end
-    if (pageNumber > Math.max(1, Math.ceil(copy.length / ARTICLES_PER_PAGE))) {
+    if (pageNumber > Math.max(1, getPageCount(copy.length))) {
       this.response.status_code = 404;
       this.response.body = "Not Found";
       return this.response;
@@ -65,10 +69,10 @@ class HomeResource extends Drash.Http.Resource {
 
     // Pagination things
     const prevPageNumber = pageNumber - 1 > 0 ? pageNumber - 1 : null;
-    const nextPageNumber = pageNumber + 1 > (copy.length / ARTICLES_PER_PAGE)
+    const nextPageNumber = pageNumber + 1 > getPageCount(copy.length)
       ? null
       : pageNumber + 1;
-    const lastPageNumber = Math.ceil(copy.length / ARTICLES_PER_PAGE);
+    const lastPageNumber = getPageCount(copy.length);
 
     const prevPageEnabled = pageNumber !== 1;
     const nextPageEnabled = nextPageNumber != null;
