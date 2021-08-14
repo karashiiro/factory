@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <%~ includeFile("_meta") %>
-    <%~ includeFile("_styles") %>
-    <title>Tengine</title>
-  </head>
-  <body>
-    <div class="article">
-      <%~ it.documentInnerHtml %>
-    </div>
-  </body>
-</html>
+<% layout("_base") %>
+
+<div class="content">
+  <%~ it.documentInnerHtml %>
+</div>

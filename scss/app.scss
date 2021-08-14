@@ -5,11 +5,30 @@ body {
     font-family: "Roboto", sans-serif;
 }
 
-.article {
+.content {
     max-width: 640px;
     margin: 50px auto;
 }
 
+.nav-article {
+    height: 200px;
+    overflow-y: hidden;
+
+    a {
+        color: black;
+        text-decoration: none;
+    }
+
+    .nav-article-thumb {
+        margin-right: 5px;
+    }
+
+    .nav-article-title {
+        font-size: 20pt;
+    }
+}
+
+/* Google Docs restyling - these class names must not be changed. */
 .title {
     font-size: 24pt;
 }

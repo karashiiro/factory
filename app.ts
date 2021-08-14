@@ -45,8 +45,8 @@ class HomeResource extends Drash.Http.Resource {
       return this.response;
     }
 
-    const startIndex = ARTICLES_PER_PAGE * pageNumber;
-    const endIndex = Math.min(startIndex + ARTICLES_PER_PAGE, copy.length - 1);
+    const startIndex = ARTICLES_PER_PAGE * (pageNumber - 1);
+    const endIndex = Math.min(startIndex + ARTICLES_PER_PAGE, copy.length);
     const articles = copy.slice(startIndex, endIndex);
 
     // Check if the page number is past the end
@@ -61,6 +61,7 @@ class HomeResource extends Drash.Http.Resource {
       "./index",
       {
         articles,
+        articlePathPrefix: ARTICLE_PATH_PREFIX,
         pageNumber,
         nextPageNumber: pageNumber + 1 > (copy.length / ARTICLES_PER_PAGE)
           ? null

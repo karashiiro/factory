@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%~ includeFile("_meta") %>
+    <%~ includeFile("_styles") %>
+    <title>Tengine</title>
+  </head>
+  <body>
+    <%~ it.body %>
+  </body>
+</html>
