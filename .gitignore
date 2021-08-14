@@ -1,4 +1,5 @@
 www/css/**/*.css
 www/css/**/*.css.map
 !www/css/fontawesome.css
+!www/css/fontawesome-brands.css
 !www/css/fontawesome-solid.css
