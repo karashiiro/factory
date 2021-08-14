@@ -15,7 +15,13 @@
   <div class="page-button-container">
     <a class="page-button<%= !it.pages.first.enabled ? " disabled" : "" %>" href="<%= it.pages.first.url %>"><i class="fas fa-angle-double-left"></i></a>
     <a class="page-button<%= !it.pages.prev.enabled ? " disabled" : "" %>" href="<%= it.pages.prev.url %>"><i class="fas fa-angle-left"></i></a>
-    <a class="page-button number<%= !it.pages.curr.enabled ? " disabled" : "" %>" href="<%= it.pages.curr.url %>"><%= it.pages.curr.pageNumber %></span>
+    <% for (var page = Math.max(it.pages.first.pageNumber, it.pages.curr.pageNumber - 3); page <= Math.min(it.pages.last.pageNumber, it.pages.curr.pageNumber + 3); page++) { %>
+      <% if (page === it.pages.curr.pageNumber) { %>
+        <a class="page-button number current" href="<%= it.pages.curr.url %>"><%= page %></a>
+      <% } else { %>
+        <a class="page-button number" href="<%= it.getPageUrl(page) %>"><%= page %></a>
+      <% } %>
+    <% } %>
     <a class="page-button<%= !it.pages.next.enabled ? " disabled" : "" %>" href="<%= it.pages.next.url %>"><i class="fas fa-angle-right"></i></a>
     <a class="page-button<%= !it.pages.last.enabled ? " disabled" : "" %>" href="<%= it.pages.last.url %>"><i class="fas fa-angle-double-right"></i></a>
   </div>

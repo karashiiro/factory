@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
 body {
     background-color: #f4f4f4;
@@ -48,9 +48,14 @@ body {
 
         &.number {
             font-size: 16pt;
+            font-weight: 300;
             margin-left: 4px;
             margin-right: 4px;
             margin-bottom: 4px;
+        }
+
+        &.current {
+            font-weight: 700;
         }
 
         &.disabled {

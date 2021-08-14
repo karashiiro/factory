@@ -6,6 +6,7 @@
     <title>Tengine</title>
   </head>
   <body>
+    <script>0</script>
     <%~ it.body %>
   </body>
 </html>

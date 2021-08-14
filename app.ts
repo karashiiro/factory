@@ -22,6 +22,10 @@ async function RerenderCSSMiddleware(
   }
 }
 
+function getPageUrl(pageNumber: number) {
+  return PAGES_PATH_PREFIX + "/" + pageNumber;
+}
+
 class HomeResource extends Drash.Http.Resource {
   static paths = ["/", `${PAGES_PATH_PREFIX}/:pageNumber`];
   public async GET() {
@@ -45,12 +49,15 @@ class HomeResource extends Drash.Http.Resource {
       return this.response;
     }
 
+    // Sort in timestamp-descending order
+    copy.sort((a, b) => b.postDate.valueOf() - a.postDate.valueOf());
+
     const startIndex = ARTICLES_PER_PAGE * (pageNumber - 1);
     const endIndex = Math.min(startIndex + ARTICLES_PER_PAGE, copy.length);
     const articles = copy.slice(startIndex, endIndex);
 
     // Check if the page number is past the end
-    if (pageNumber > Math.max(1, copy.length / ARTICLES_PER_PAGE)) {
+    if (pageNumber > Math.max(1, Math.ceil(copy.length / ARTICLES_PER_PAGE))) {
       this.response.status_code = 404;
       this.response.body = "Not Found";
       return this.response;
@@ -77,14 +84,14 @@ class HomeResource extends Drash.Http.Resource {
           first: {
             pageNumber: 1,
             enabled: true,
-            url: PAGES_PATH_PREFIX + "/1",
+            url: getPageUrl(1),
           },
           prev: {
             pageNumber: prevPageNumber,
             enabled: prevPageEnabled,
             url: !prevPageEnabled
               ? "javascript:void(0);"
-              : PAGES_PATH_PREFIX + "/" + prevPageNumber,
+              : getPageUrl(prevPageNumber!),
           },
           curr: {
             pageNumber,
@@ -95,14 +102,15 @@ class HomeResource extends Drash.Http.Resource {
             pageNumber: nextPageNumber,
             enabled: nextPageEnabled,
             url: !nextPageEnabled ? "javascript:void(0);"
-            : PAGES_PATH_PREFIX + "/" + nextPageNumber,
+            : getPageUrl(nextPageNumber!),
           },
           last: {
             pageNumber: lastPageNumber,
             enabled: true,
-            url: PAGES_PATH_PREFIX + "/" + lastPageNumber,
+            url: getPageUrl(lastPageNumber!),
           },
         },
+        getPageUrl,
       },
     );
     return this.response;
