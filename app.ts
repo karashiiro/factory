@@ -1,16 +1,21 @@
 import { dirname, fromFileUrl } from "path";
-import { DOMParser } from "deno-dom";
 import { Drash } from "drash";
 import { Tengine } from "tengine";
 import { configure, renderFile } from "eta";
-import { getCopy, getDocument } from "./cms.ts";
+import { getCopy } from "./cms.ts";
+import {
+  getArticlesOnPage,
+  getPageCount,
+  getPageUrl,
+  getPaginationInfo,
+} from "./pagination.ts";
 import { sass } from "./sass.ts";
 import {
   ARTICLE_PATH_PREFIX,
-  ARTICLES_PER_PAGE,
   COPY_CSV_URL,
   PAGES_PATH_PREFIX,
 } from "./app_config.ts";
+import { loadDocument } from "./document.ts";
 
 async function RerenderCSSMiddleware(
   req: Drash.Http.Request,
@@ -18,14 +23,6 @@ async function RerenderCSSMiddleware(
   if (req.url_path.startsWith("/css")) {
     await sass("scss:www/css").execute();
   }
-}
-
-function getPageUrl(pageNumber: number) {
-  return PAGES_PATH_PREFIX + "/" + pageNumber;
-}
-
-function getPageCount(pages: number): number {
-  return Math.ceil(pages / ARTICLES_PER_PAGE);
 }
 
 class HomeResource extends Drash.Http.Resource {
@@ -54,9 +51,7 @@ class HomeResource extends Drash.Http.Resource {
     // Sort in timestamp-descending order
     copy.sort((a, b) => b.postDate.valueOf() - a.postDate.valueOf());
 
-    const startIndex = ARTICLES_PER_PAGE * (pageNumber - 1);
-    const endIndex = Math.min(startIndex + ARTICLES_PER_PAGE, copy.length);
-    const articles = copy.slice(startIndex, endIndex);
+    const articles = getArticlesOnPage(copy, pageNumber);
 
     // Check if the page number is past the end
     if (pageNumber > Math.max(1, getPageCount(copy.length))) {
@@ -65,16 +60,6 @@ class HomeResource extends Drash.Http.Resource {
       return this.response;
     }
 
-    // Pagination things
-    const prevPageNumber = pageNumber - 1 > 0 ? pageNumber - 1 : null;
-    const nextPageNumber = pageNumber + 1 > getPageCount(copy.length)
-      ? null
-      : pageNumber + 1;
-    const lastPageNumber = getPageCount(copy.length);
-
-    const prevPageEnabled = pageNumber !== 1;
-    const nextPageEnabled = nextPageNumber != null;
-
     this.response.headers.set("Content-Type", "text/html");
     this.response.body = await this.response.render(
       "./index",
@@ -82,36 +67,7 @@ class HomeResource extends Drash.Http.Resource {
         articles,
         articlePathPrefix: ARTICLE_PATH_PREFIX,
         pagesPathPrefix: PAGES_PATH_PREFIX,
-        pages: {
-          first: {
-            pageNumber: 1,
-            enabled: true,
-            url: getPageUrl(1),
-          },
-          prev: {
-            pageNumber: prevPageNumber,
-            enabled: prevPageEnabled,
-            url: !prevPageEnabled
-              ? "javascript:void(0);"
-              : getPageUrl(prevPageNumber!),
-          },
-          curr: {
-            pageNumber,
-            enabled: true,
-            url: "javascript:void(0);",
-          },
-          next: {
-            pageNumber: nextPageNumber,
-            enabled: nextPageEnabled,
-            url: !nextPageEnabled ? "javascript:void(0);"
-            : getPageUrl(nextPageNumber!),
-          },
-          last: {
-            pageNumber: lastPageNumber,
-            enabled: true,
-            url: getPageUrl(lastPageNumber!),
-          },
-        },
+        pages: getPaginationInfo(pageNumber, copy.length),
         getPageUrl,
       },
     );
@@ -134,32 +90,10 @@ class ArticleResource extends Drash.Http.Resource {
         return this.response;
       }
 
-      // Export document and pull out article body
-      const documentHtml = await getDocument(documentInfo.url);
-      const dom = new DOMParser().parseFromString(documentHtml, "text/html");
-      const documentInnerHtml = dom?.querySelector("body")?.innerHTML;
-      if (documentInnerHtml == null) {
-        this.response.status_code = 500;
-        this.response.body = "Internal Server Error";
-        return this.response;
-      }
-
-      // Rerender custom styles to a static file
-      const styles = dom?.querySelector("style")?.innerText;
-      const stylesheetFileName = `${
-        documentInfo.fileName.substr(0, documentInfo.fileName.lastIndexOf("."))
-      }.css`;
-      if (styles != null) {
-        const cmd = sass(
-          "--stdin",
-          "--no-source-map",
-          `www/css/${stylesheetFileName}`,
-        );
-
-        // We scope it to the gdocs class so it doesn't affect our other styles
-        await cmd.writeStdin(`.gdocs{${styles}}`);
-        await cmd.execute();
-      }
+      // Pull down the article
+      const { documentInnerHtml, stylesheetFileName } = await loadDocument(
+        documentInfo,
+      );
 
       this.response.headers.set("Content-Type", "text/html");
       this.response.body = await this.response.render(

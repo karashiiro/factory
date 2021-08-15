@@ -1,3 +1,5 @@
+import { encodeToBytes } from "./encoding.ts";
+
 export interface SassCommand {
   writeStdin: (input: string) => Promise<void>;
   execute: () => Promise<void>;
@@ -12,7 +14,7 @@ export function sass(...params: string[]): SassCommand {
   return {
     writeStdin: async (input: string) => {
       await renderProcess.stdin.write(
-        new TextEncoder().encode(input),
+        encodeToBytes(input),
       );
     },
     execute: async () => {

@@ -7,3 +7,6 @@ help: ## Show this help
 
 run: ## Run the development server
 	deno run --allow-net --allow-run --allow-read --unstable --import-map import_map.json app.ts
+
+build: ## Build the website for production
+	deno run --allow-net --allow-run --allow-read --allow-write --unstable --import-map import_map.json build.ts
