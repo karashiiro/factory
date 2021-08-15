@@ -4,6 +4,7 @@ import { Drash } from "drash";
 import { Tengine } from "tengine";
 import { configure, renderFile } from "eta";
 import { getCopy, getDocument } from "./cms.ts";
+import { sass } from "./sass.ts";
 import {
   ARTICLE_PATH_PREFIX,
   ARTICLES_PER_PAGE,
@@ -15,10 +16,7 @@ async function RerenderCSSMiddleware(
   req: Drash.Http.Request,
 ): Promise<void> {
   if (req.url_path.startsWith("/css")) {
-    const renderProcess = Deno.run({
-      cmd: ["sass", "scss:www/css"],
-    });
-    await renderProcess.status();
+    await sass("scss:www/css").execute();
   }
 }
 
@@ -152,23 +150,15 @@ class ArticleResource extends Drash.Http.Resource {
         documentInfo.fileName.substr(0, documentInfo.fileName.lastIndexOf("."))
       }.css`;
       if (styles != null) {
-        const renderProcess = Deno.run({
-          cmd: [
-            "sass",
-            "--stdin",
-            "--no-source-map",
-            `www/css/${stylesheetFileName}`,
-          ],
-          stdin: "piped",
-        });
+        const cmd = sass(
+          "--stdin",
+          "--no-source-map",
+          `www/css/${stylesheetFileName}`,
+        );
 
         // We scope it to the gdocs class so it doesn't affect our other styles
-        await renderProcess.stdin.write(
-          new TextEncoder().encode(`.gdocs{${styles}}`),
-        );
-        renderProcess.stdin.close();
-
-        await renderProcess.status();
+        await cmd.writeStdin(`.gdocs{${styles}}`);
+        await cmd.execute();
       }
 
       this.response.headers.set("Content-Type", "text/html");
