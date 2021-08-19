@@ -46,7 +46,9 @@ copySpreadsheet.sort((a, b) => b.postDate.valueOf() - a.postDate.valueOf());
 
 const pageCount = getPageCount(copySpreadsheet.length);
 for (let pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
-  const pageName = `dist${PAGES_PATH_PREFIX}/${pageNumber}.html`;
+  await emptyDir("dist" + PAGES_PATH_PREFIX + `/${pageNumber}`);
+
+  const pageName = `dist${PAGES_PATH_PREFIX}/${pageNumber}/index.html`;
   console.log("Rendering", pageName);
 
   const page = await renderFile("./index", {
