@@ -21,4 +21,4 @@ deploy-dev: ## Deploy a built website to a running Localstack server (requires a
 	-@aws --endpoint-url=http://localhost:4566 s3 mb s3://factory
 	@aws --endpoint-url=http://localhost:4566 s3 sync ./dist s3://factory --acl public-read
 	@aws --endpoint-url=http://localhost:4566 s3 website s3://factory --index-document index.html
-	@echo Website deployed at http://factory.s3-website.localhost:4566/
+	@echo Website deployed at http://factory.s3-website.localhost.localstack.cloud:4566/
