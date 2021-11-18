@@ -16,13 +16,10 @@ gh-pages: ## Build the website into the gh-pages branch
 	-git branch -D gh-pages
 	git branch gh-pages
 	git checkout gh-pages
+	cp -r ./dist/. ./
+	rm -rf ./dist
 	rm -rf ./.vscode
 	rm -rf ./scss
 	rm -rf ./templates
 	rm -rf ./www
-	rm ./*
-	make explode-dist
-	rm -rf ./dist
-
-explode-dist: # Copies all files from dist/ into the current directory
-	cp -r ./dist/. ./
+	-rm ./*
