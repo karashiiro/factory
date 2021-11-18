@@ -10,15 +10,3 @@ run: ## Run the development server
 
 build: ## Build the website for production
 	@deno run --allow-net --allow-run --allow-read --allow-write --unstable --import-map import_map.json build.ts
-
-localstack-start: ## Start the Localstack server for deployment testing (requires docker-compose)
-	@docker-compose up -d
-
-localstack-stop: ## Stop a running Localstack server (requires docker-compose)
-	@docker-compose down
-
-deploy-dev: ## Deploy a built website to a running Localstack server (requires aws)
-	-@aws --endpoint-url=http://localhost:4566 s3 mb s3://factory
-	@aws --endpoint-url=http://localhost:4566 s3 sync ./dist s3://factory --acl public-read
-	@aws --endpoint-url=http://localhost:4566 s3 website s3://factory --index-document index.html
-	@echo Website deployed at http://factory.s3-website.localhost.localstack.cloud:4566/
