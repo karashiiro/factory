@@ -1,8 +1,8 @@
-import { ARTICLES_PER_PAGE, PAGES_PATH_PREFIX } from "./app_config.ts";
+import { ARTICLES_PER_PAGE, DEPLOYMENT_PATH_PREFIX, PAGES_PATH_PREFIX } from "./app_config.ts";
 import { Copy, CopyRow } from "./cms.ts";
 
-export function getPageUrl(pageNumber: number) {
-  return PAGES_PATH_PREFIX + "/" + pageNumber;
+export function getPageUrl(pageNumber: number, deploying: boolean=false) {
+  return (deploying ? DEPLOYMENT_PATH_PREFIX : "") + PAGES_PATH_PREFIX + "/" + pageNumber;
 }
 
 export function getPageCount(articleCount: number): number {
@@ -18,6 +18,7 @@ export function getArticlesOnPage(copy: Copy, pageNumber: number): CopyRow[] {
 export function getPaginationInfo(
   pageNumber: number,
   articleCount: number,
+  deploying: boolean=false,
 ): any {
   const prevPageNumber = pageNumber - 1 > 0 ? pageNumber - 1 : null;
   const nextPageNumber = pageNumber + 1 > getPageCount(articleCount)
@@ -32,14 +33,14 @@ export function getPaginationInfo(
     first: {
       pageNumber: 1,
       enabled: true,
-      url: getPageUrl(1),
+      url: getPageUrl(1, deploying),
     },
     prev: {
       pageNumber: prevPageNumber,
       enabled: prevPageEnabled,
       url: !prevPageEnabled
         ? "javascript:void(0);"
-        : getPageUrl(prevPageNumber!),
+        : getPageUrl(prevPageNumber!, deploying),
     },
     curr: {
       pageNumber,
@@ -50,12 +51,12 @@ export function getPaginationInfo(
       pageNumber: nextPageNumber,
       enabled: nextPageEnabled,
       url: !nextPageEnabled ? "javascript:void(0);"
-      : getPageUrl(nextPageNumber!),
+      : getPageUrl(nextPageNumber!, deploying),
     },
     last: {
       pageNumber: lastPageNumber,
       enabled: true,
-      url: getPageUrl(lastPageNumber!),
+      url: getPageUrl(lastPageNumber!, deploying),
     },
   };
 }

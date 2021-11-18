@@ -57,7 +57,7 @@ for (let pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
     deploymentPathPrefix: DEPLOYMENT_PATH_PREFIX,
     articlePathPrefix: ARTICLE_PATH_PREFIX,
     pagesPathPrefix: PAGES_PATH_PREFIX,
-    pages: getPaginationInfo(pageNumber, copySpreadsheet.length),
+    pages: getPaginationInfo(pageNumber, copySpreadsheet.length, true),
     getPageUrl,
   });
 
