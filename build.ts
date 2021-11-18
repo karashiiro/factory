@@ -83,6 +83,7 @@ for (const documentInfo of copySpreadsheet) {
 
   const page = await renderFile("./article", {
     documentInnerHtml,
+    deploymentPathPrefix: DEPLOYMENT_PATH_PREFIX,
     extraStyleLinks:
       `<link rel="stylesheet" href="${DEPLOYMENT_PATH_PREFIX}/css/${stylesheetFileName}">`,
   });
