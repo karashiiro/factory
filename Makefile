@@ -21,7 +21,9 @@ gh-pages: ## Build the website into the gh-pages branch
 	rm -rf ./scss
 	rm -rf ./templates
 	rm -rf ./www
-	-rm ./*
+	rm ./*.ts
+	rm ./*.json
+	rm ./Makefile
 	git add .
 	git config user.email "factory@example.com"
 	git config user.name "Factory"
