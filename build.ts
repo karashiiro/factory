@@ -15,6 +15,7 @@ import {
   PAGES_PATH_PREFIX,
 } from "./app_config.ts";
 import { loadDocument } from "./document.ts";
+import { DEPLOYMENT_PATH_PREFIX } from "./app_config";
 
 // Eta configuration
 configure({ views: "./templates/" });
@@ -37,8 +38,8 @@ await copy("www/webfonts", "dist/webfonts");
 await sass("--no-source-map", "--style=compressed", "scss:dist/css").execute();
 
 // Create directories for pages
-await emptyDir("dist" + ARTICLE_PATH_PREFIX);
-await emptyDir("dist" + PAGES_PATH_PREFIX);
+await emptyDir(`dist${ARTICLE_PATH_PREFIX}`);
+await emptyDir(`dist${PAGES_PATH_PREFIX}`);
 
 // Render home pages
 const copySpreadsheet = await getCopy(COPY_CSV_URL);
@@ -46,15 +47,15 @@ copySpreadsheet.sort((a, b) => b.postDate.valueOf() - a.postDate.valueOf());
 
 const pageCount = getPageCount(copySpreadsheet.length);
 for (let pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
-  await emptyDir("dist" + PAGES_PATH_PREFIX + `/${pageNumber}`);
+  await emptyDir(`dist${PAGES_PATH_PREFIX}/${pageNumber}`);
 
   const pageName = `dist${PAGES_PATH_PREFIX}/${pageNumber}/index.html`;
   console.log("Rendering", pageName);
 
   const page = await renderFile("./index", {
     articles: getArticlesOnPage(copySpreadsheet, pageNumber),
-    articlePathPrefix: ARTICLE_PATH_PREFIX,
-    pagesPathPrefix: PAGES_PATH_PREFIX,
+    articlePathPrefix: DEPLOYMENT_PATH_PREFIX + ARTICLE_PATH_PREFIX,
+    pagesPathPrefix: DEPLOYMENT_PATH_PREFIX + PAGES_PATH_PREFIX,
     pages: getPaginationInfo(pageNumber, copySpreadsheet.length),
     getPageUrl,
   });
@@ -82,7 +83,7 @@ for (const documentInfo of copySpreadsheet) {
   const page = await renderFile("./article", {
     documentInnerHtml,
     extraStyleLinks:
-      `<link rel="stylesheet" href="/css/${stylesheetFileName}">`,
+      `<link rel="stylesheet" href="${DEPLOYMENT_PATH_PREFIX}/css/${stylesheetFileName}">`,
   });
 
   await Deno.writeFile(pageName, encodeToBytes(page as string));
