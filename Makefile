@@ -14,8 +14,7 @@ build: ## Build the website for production
 gh-pages: ## Build the website into the gh-pages branch
 	make build
 	-git branch -D gh-pages
-	git branch gh-pages
-	git checkout gh-pages
+	git checkout --orphan gh-pages
 	cp -r ./dist/. ./
 	rm -rf ./dist
 	rm -rf ./.vscode
@@ -27,4 +26,4 @@ gh-pages: ## Build the website into the gh-pages branch
 	git config user.email "factory@example.com"
 	git config user.name "Factory"
 	git commit -m "gh-pages page build"
-	git push --set-upstream-origin gh-pages -f
+	git push --set-upstream origin gh-pages -f
