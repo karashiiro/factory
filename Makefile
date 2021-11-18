@@ -14,14 +14,12 @@ build: ## Build the website for production
 gh-pages: ## Build the website into the gh-pages branch
 	make build
 	-git branch -D gh-pages
-	-git branch gh-pages
+	git branch gh-pages
 	git checkout gh-pages
 	rm -rf ./.vscode
 	rm -rf ./scss
 	rm -rf ./templates
 	rm -rf ./www
 	rm ./*
-	cd ./dist
-	cp -R ./* ./..
-	cd ..
+	cp -r ./dist/. ./
 	rm -rf ./dist
