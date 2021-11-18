@@ -2,7 +2,7 @@
 <html>
   <head>
     <%~ includeFile("_meta") %>
-    <%~ includeFile("_styles", { extraStyleLinks: it.extraStyleLinks }) %>
+    <%~ includeFile("_styles", { extraStyleLinks: it.extraStyleLinks, deploymentPathPrefix: it.deploymentPathPrefix }) %>
     <title>factory</title>
   </head>
   <body>

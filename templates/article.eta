@@ -1,4 +1,4 @@
-<% layout("_base", { extraStyleLinks: it.extraStyleLinks }) %>
+<% layout("_base", { extraStyleLinks: it.extraStyleLinks, deploymentPathPrefix: it.deploymentPathPrefix }) %>
 
 <div class="content gdocs">
   <%~ it.documentInnerHtml %>

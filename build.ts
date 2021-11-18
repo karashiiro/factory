@@ -54,8 +54,9 @@ for (let pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
 
   const page = await renderFile("./index", {
     articles: getArticlesOnPage(copySpreadsheet, pageNumber),
-    articlePathPrefix: DEPLOYMENT_PATH_PREFIX + ARTICLE_PATH_PREFIX,
-    pagesPathPrefix: DEPLOYMENT_PATH_PREFIX + PAGES_PATH_PREFIX,
+    deploymentPathPrefix: DEPLOYMENT_PATH_PREFIX,
+    articlePathPrefix: ARTICLE_PATH_PREFIX,
+    pagesPathPrefix: PAGES_PATH_PREFIX,
     pages: getPaginationInfo(pageNumber, copySpreadsheet.length),
     getPageUrl,
   });

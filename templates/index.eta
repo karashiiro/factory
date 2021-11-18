@@ -1,4 +1,4 @@
-<% layout("_base") %>
+<% layout("_base", { deploymentPathPrefix: it.deploymentPathPrefix }) %>
 
 <div class="content">
   <% it.articles.forEach(function(article) { %>
