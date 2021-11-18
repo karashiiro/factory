@@ -12,10 +12,10 @@ import { sass } from "./sass.ts";
 import {
   ARTICLE_PATH_PREFIX,
   COPY_CSV_URL,
+  DEPLOYMENT_PATH_PREFIX,
   PAGES_PATH_PREFIX,
 } from "./app_config.ts";
 import { loadDocument } from "./document.ts";
-import { DEPLOYMENT_PATH_PREFIX } from "./app_config";
 
 // Eta configuration
 configure({ views: "./templates/" });
