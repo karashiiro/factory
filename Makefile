@@ -24,5 +24,7 @@ gh-pages: ## Build the website into the gh-pages branch
 	rm -rf ./www
 	-rm ./*
 	git add .
+	git config user.email "factory@example.com"
+	git config user.name "Factory"
 	git commit -m "gh-pages page build"
 	git push --set-upstream-origin gh-pages -f
