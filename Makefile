@@ -21,5 +21,7 @@ gh-pages: ## Build the website into the gh-pages branch
 	rm -rf ./templates
 	rm -rf ./www
 	rm ./*
-	cp -R ./dist/. ./
+	cd ./dist
+	cp -R ./* ./..
+	cd ..
 	rm -rf ./dist
