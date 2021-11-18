@@ -21,5 +21,8 @@ gh-pages: ## Build the website into the gh-pages branch
 	rm -rf ./templates
 	rm -rf ./www
 	rm ./*
-	cp -r ./dist/. ./
+	make explode-dist
 	rm -rf ./dist
+
+explode-dist: # Copies all files from dist/ into the current directory
+	cp -r ./dist/. ./
