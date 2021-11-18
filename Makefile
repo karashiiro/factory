@@ -13,7 +13,9 @@ build: ## Build the website for production
 
 gh-pages: ## Build the website into the gh-pages branch
 	make build
-	git checkout -b gh-pages
+	-git branch -D gh-pages
+	-git branch gh-pages
+	git checkout gh-pages
 	rm -rf ./.vscode
 	rm -rf ./scss
 	rm -rf ./templates
