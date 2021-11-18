@@ -23,3 +23,6 @@ gh-pages: ## Build the website into the gh-pages branch
 	rm -rf ./templates
 	rm -rf ./www
 	-rm ./*
+	git add .
+	git commit -m "gh-pages page build"
+	git push --set-upstream-origin gh-pages -f
